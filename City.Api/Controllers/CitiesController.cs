@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
+using City.Api.Model;
 namespace City.Api.Controllers
 {
    
@@ -12,16 +12,24 @@ namespace City.Api.Controllers
         //3. declare a method hat return data
         //[HttpGet("api/cities")]
         [HttpGet]
-        public JsonResult GetCities()
+        public ActionResult<IEnumerable<CityDto>> GetCities()
         {
-           
-            return new JsonResult(
-                new List<object>
-                {
-                    new {id=1,Name="New York cities"},
-                    new { id=2, Name="Antwerp"}
-                }
-                );
+            // var temp = new JsonResult(CityDataStore.Current.Cities);
+            //temp.StatusCode = 200;
+
+            //return temp;
+
+            return Ok(CityDataStore.Current.Cities);
+        }
+        [HttpGet("{id}")]
+        public ActionResult<CityDto> GetCity(int id)
+        {
+            var cityToReturn = CityDataStore.Current.Cities.FirstOrDefault(c=> c.Id == id);
+            if(cityToReturn == null)
+            {
+                return NotFound();
+            }
+            return Ok(cityToReturn);
         }
 
     }
